@@ -19,9 +19,9 @@ exports.up = function (db) {
         id: { type: 'string', primaryKey: true },
         name: 'string',
         link: 'string',
-        city: 'string',
         time: 'timestamp',
         attendees: 'int',
+        city: 'jsonb',
         event_group: 'jsonb',
     });
 };
