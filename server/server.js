@@ -1,15 +1,19 @@
+'use strict';
+
 import express from 'express';
+import database from './src/infra/database/index';
 
 const app = express();
 
 const router = express.Router();
-router.get('/cities', (req, res) => {
-    const cities = [
-        {name: 'New York City', population: 8175133},
-        {name: 'Los Angeles',   population: 3792621},
-        {name: 'Chicago',       population: 2695598},
-    ];
-    res.json(cities);
+router.get('/stats', async (req, res) => {
+    const { rows } = await database.query(`
+SELECT city->>'city' AS city, COUNT(*) AS events
+FROM public.events
+GROUP BY city
+ORDER BY events DESC
+    `);
+    res.json(rows);
 });
 app.use(router);
 

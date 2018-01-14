@@ -42,6 +42,8 @@ const findPastEvents = async (groupIds) => {
         time: `${beginningOf2017.getTime()},${endOf2017.getTime()}`,
     });
 
+    // @todo manage pager
+
     return new Events(data);
 };
 
