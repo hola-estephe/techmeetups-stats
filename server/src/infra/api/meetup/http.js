@@ -1,26 +1,26 @@
 'use strict';
 
-import fetch from 'node-fetch';
-import queryString from 'querystring';
+import axios from 'axios';
 
-const request = async (resource, query = {}) => {
+const request = async (url, query = {}) => {
     try {
         // @todo merge meetupApiKey to query
-        const url = `https://api.meetup.com${resource}?${queryString.stringify(query)}`;
-        const response = await fetch(url);
+        const response = await axios({
+            method: 'GET',
+            url: url,
+            baseURL: 'https://api.meetup.com/',
+            params: query,
+            responseType: 'json',
+        })
 
+        // @todo move this in an Interceptor like this: https://github.com/axios/axios/issues/934#issuecomment-322003342
         if (429 === response.status) {
             console.log(response.status);
             console.log(response.headers);
             throw new Error('Rate limit reached');
         }
 
-        if (200 !== response.status) {
-            console.log(response);
-            throw new Error(`Request failed: [${response.status}]`);
-        }
-
-        return await response.json();
+        return response.data;
     } catch (e) {
         console.error(e.stack);
         throw e;

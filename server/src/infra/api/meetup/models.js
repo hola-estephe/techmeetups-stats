@@ -59,31 +59,9 @@ const Event = t.struct({
     group: Group,
 }, 'Event');
 
-const Meta = t.struct({
-    id: t.String,
-    method: t.String,
-    title: t.String,
-    description: t.String,
-    link: t.String,
-    url: t.String,
-    count: t.Integer,
-    total_count: t.Integer,
-    lat: t.String,
-    lon: t.String,
-    next: t.String,
-    updated: t.Integer,
-}, 'Meta');
-
-const Events = t.struct({
-    results: t.list(Event),
-    meta: Meta,
-}, 'Events');
-
 export {
     City,
     Group,
     Venue,
     Event,
-    Meta,
-    Events,
 }
