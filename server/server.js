@@ -8,9 +8,10 @@ const app = express();
 const router = express.Router();
 router.get('/stats', async (req, res) => {
     const { rows } = await database.query(`
-SELECT city->>'city' AS city, COUNT(*) AS events
+SELECT city, COUNT(*) AS events
 FROM public.events
 GROUP BY city
+HAVING COUNT(*) > 50
 ORDER BY events DESC
     `);
     res.json(rows);

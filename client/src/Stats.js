@@ -1,27 +1,19 @@
 import React, { Component } from 'react';
 
-class Stats extends Component {
-  state = {
-    cities: []
-  };
-
-  async componentDidMount() {
-    const response = await fetch('/stats');
-    const cities = await response.json();
-    this.setState({cities: cities});
-  }
-
+export default class Stats extends Component {
   render() {
     return (
       <div>
         <ul>
-          {this.state.cities.map(city => {
-            return <li key={city.city}> <strong>{city.city}</strong>: {city.events} meetups</li>
+          {this.props.stats.map(stats => {
+            return (
+              <li key={stats.city.city}>
+                <strong>{stats.city.city}</strong>: {stats.events} meetups
+              </li>
+            );
           })}
         </ul>
       </div>
     );
   }
 }
-
-export default Stats;
