@@ -16,14 +16,14 @@ exports.setup = function (options, seedLink) {
 
 exports.up = function (db) {
     return db.createTable('events', {
-        id: { type: 'uuid', primaryKey: true },
-        event_id: { type: 'string' },
+        id: { type: 'string', primaryKey: true },
         name: 'string',
         link: 'string',
         time: 'timestamp',
         attendees: 'int',
         city: 'jsonb',
         event_group: 'jsonb',
+        venue: 'jsonb',
     });
 };
 

@@ -8,21 +8,42 @@ if (meetupApiKey === undefined) {
     throw new Error('Must provide MEETUP_API_KEY env variable');
 }
 
-const getCities = async () => {
+const searchCities = async (query) => {
     const data = await request('/2/cities', {
         country: 'FR',
-        limit: 1000,
+        limit: 200,
+        query: query,
         key: meetupApiKey,
     });
 
-    return data.results
-        .filter(city => city.ranking <= 20)
+    return data.results.map(city => new City(city));
+};
+
+const getCities = async () => {
+    let data = await request('/2/cities', {
+        country: 'FR',
+        limit: 200,
+        key: meetupApiKey,
+    });
+    let cities = data.results;
+    let meta = data.meta;
+
+    while ('' !== meta.next) {
+        data = await request(meta.next);
+        meta = data.meta;
+        cities.push(...data.results);
+    }
+
+    return cities
+        .sort((a, b) => b.member_count - a.member_count)
+        .slice(0, 99)
         .map(city => new City(city));
 };
 
 const findTechGroupsByCity = async (city) => {
     const data = await request('/find/groups', {
-        location: city.city,
+        lat: city.lat,
+        lon: city.lon,
         radius: 0,
         category: 34,
         key: meetupApiKey,
@@ -54,6 +75,7 @@ const findPastEvents = async (groupIds) => {
 };
 
 export {
+    searchCities,
     getCities,
     findTechGroupsByCity,
     findPastEvents

@@ -9,7 +9,6 @@ const City = t.struct({
     lon: t.Number,
     country: t.String,
     localized_country_name: t.String,
-    distance: t.Number,
     ranking: t.Integer,
     member_count: t.Integer,
     zip: t.String,
