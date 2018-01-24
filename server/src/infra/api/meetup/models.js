@@ -2,7 +2,8 @@
 
 import t from 'tcomb';
 
-const City = t.struct({
+const City = t.struct(
+  {
     id: t.Number,
     city: t.String,
     lat: t.Number,
@@ -12,18 +13,24 @@ const City = t.struct({
     ranking: t.Integer,
     member_count: t.Integer,
     zip: t.String,
-}, 'City');
+  },
+  'City',
+);
 
-const Group = t.struct({
+const Group = t.struct(
+  {
     id: t.Number,
     name: t.String,
     join_mode: t.maybe(t.String),
     urlname: t.String,
     who: t.String,
     created: t.Number,
-}, 'Group');
+  },
+  'Group',
+);
 
-const Venue = t.struct({
+const Venue = t.struct(
+  {
     id: t.Number,
     name: t.String,
     lat: t.Number,
@@ -34,9 +41,12 @@ const Venue = t.struct({
     city: t.String,
     country: t.String,
     localized_country_name: t.String,
-}, 'Venue');
+  },
+  'Venue',
+);
 
-const Event = t.struct({
+const Event = t.struct(
+  {
     id: t.String,
     visibility: t.String,
     name: t.String,
@@ -56,11 +66,8 @@ const Event = t.struct({
     venue: t.maybe(Venue),
     how_to_find_us: t.maybe(t.String),
     group: Group,
-}, 'Event');
+  },
+  'Event',
+);
 
-export {
-    City,
-    Group,
-    Venue,
-    Event,
-}
+export { City, Group, Venue, Event };

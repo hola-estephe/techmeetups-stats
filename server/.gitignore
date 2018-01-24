@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/.reify-cache
 
 # testing
 /coverage
