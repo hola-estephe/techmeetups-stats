@@ -14,7 +14,7 @@ const City = t.struct(
     member_count: t.Integer,
     zip: t.String,
   },
-  'City',
+  'City'
 );
 
 const Group = t.struct(
@@ -26,7 +26,7 @@ const Group = t.struct(
     who: t.String,
     created: t.Number,
   },
-  'Group',
+  'Group'
 );
 
 const Venue = t.struct(
@@ -42,7 +42,7 @@ const Venue = t.struct(
     country: t.String,
     localized_country_name: t.String,
   },
-  'Venue',
+  'Venue'
 );
 
 const Event = t.struct(
@@ -67,7 +67,7 @@ const Event = t.struct(
     how_to_find_us: t.maybe(t.String),
     group: Group,
   },
-  'Event',
+  'Event'
 );
 
 export { City, Group, Venue, Event };

@@ -1,14 +1,16 @@
 'use strict';
 
-import { getCities, findTechGroupsByCity, findPastEvents } from '../infra/api/meetup/api';
+import {
+  getCities,
+  findTechGroupsByCity,
+  findPastEvents,
+} from '../infra/api/meetup/api';
 import database from '../infra/database/index';
 import moment from 'moment';
 import uuid from 'uuid/v4';
 
-export default importEvents = async cities => {
+export default async (cities, year) => {
   const client = await database.connect();
-
-  let eventIds = [];
 
   try {
     for (const city of cities) {
@@ -21,38 +23,29 @@ export default importEvents = async cities => {
       }
 
       try {
-        const events = (await findPastEvents(groupIds))
-          .filter(event => {
-            const notSaved = !eventIds.includes(event.id);
-            if (notSaved) {
-              eventIds.push(event.id);
-            }
-
-            return notSaved;
-          })
-          .map(event => {
-            return {
-              id: event.id,
-              name: event.name,
-              link: event.event_url,
-              time: moment(event.time + event.utc_offset)
-                .utc()
-                .format(),
-              attendees: event.yes_rsvp_count,
-              city: {
-                city: city.city,
-                lat: city.lat,
-                lon: city.lon,
-              },
-              group: {
-                id: event.group.id,
-                name: event.group.name,
-                urlname: event.group.urlname,
-                created: event.group.created,
-              },
-              venue: event.venue,
-            };
-          });
+        const events = (await findPastEvents(groupIds, year)).map(event => {
+          return {
+            id: event.id,
+            name: event.name,
+            link: event.event_url,
+            time: moment(event.time + event.utc_offset)
+              .utc()
+              .format(),
+            attendees: event.yes_rsvp_count,
+            city: {
+              city: city.city,
+              lat: city.lat,
+              lon: city.lon,
+            },
+            group: {
+              id: event.group.id,
+              name: event.group.name,
+              urlname: event.group.urlname,
+              created: event.group.created,
+            },
+            venue: event.venue,
+          };
+        });
 
         console.log(` - Found ${events.length} events`);
 
@@ -73,7 +66,7 @@ export default importEvents = async cities => {
         newEvents.forEach(async event => {
           await client.query(
             'INSERT INTO events(id, name, link, time, attendees, city, event_group, venue) VALUES($1, $2, $3, $4, $5, $6, $7, $8)',
-            Object.values(data),
+            Object.values(event)
           );
         });
         await client.query('COMMIT');

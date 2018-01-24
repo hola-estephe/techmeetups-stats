@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node --require reify server.js",
     "dev": "./node_modules/.bin/nodemon --require reify server.js",
-    "prettier": "prettier --write \"{src,migrations}/**/*.js\""
+    "prettier": "prettier --write \"{bin,migrations,src}/**/*.js\"",
+    "migrate": "db-migrate up",
+    "migrate-down": "db-migrate down"
   },
   "dependencies": {
     "axios": "^0.17.1",

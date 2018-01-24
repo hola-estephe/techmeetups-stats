@@ -52,15 +52,15 @@ const findTechGroupsByCity = async city => {
   return data.map(group => new Group(group));
 };
 
-const findPastEvents = async groupIds => {
-  const beginningOf2017 = new Date('January 01, 2017 00:00:00 UTC');
-  const endOf2017 = new Date('December 31, 2017 23:59:59 UTC');
+const findPastEvents = async (groupIds, year) => {
+  const beginningOfYear = new Date(`January 01, ${year} 00:00:00 UTC`);
+  const endOfYear = new Date(`December 31, ${year} 23:59:59 UTC`);
   let data = await request('/2/events', {
     group_id: groupIds.join(','),
     status: 'past',
     limited_events: false,
     page: 200,
-    time: `${beginningOf2017.getTime()},${endOf2017.getTime()}`,
+    time: `${beginningOfYear.getTime()},${endOfYear.getTime()}`,
   });
   let events = data.results;
   let meta = data.meta;

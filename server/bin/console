@@ -7,30 +7,41 @@ import importEvents from '../src/app/import';
 
 const program = new Command();
 
-program
-    .version('0.0.1', '-v, --version')
-    .description('TechMeetups Stats CLI');
+program.version('0.0.1', '-v, --version').description('TechMeetups Stats CLI');
 
 program
-    .command('import [query]', null, { isDefault: true })
-    .action(async (query) => {
-        const cities = await (undefined !== query ? searchCities(query) : getCities());
-        const question = {
-            type: 'checkbox',
-            message: 'Select cities',
-            name: 'cities',
-            choices: cities.map((city) => {
-                return {
-                    name: `${city.ranking+1}. ${city.city}`,
-                    value: city.city,
-                };
-            }),
-        };
-        inquirer.prompt(question).then(selection => {
-            importEvents(
-                cities.filter((city) => selection.cities.includes(city.city))
-            );
-        });
+  .command('import [query]', null, { isDefault: true })
+  .action(async query => {
+    const cities = await (undefined !== query
+      ? searchCities(query)
+      : getCities());
+    const question = [
+      {
+        type: 'checkbox',
+        message: 'Select cities',
+        name: 'cities',
+        choices: cities.map(city => {
+          return {
+            name: `${city.ranking + 1}. ${city.city}`,
+            value: city.city,
+          };
+        }),
+      },
+      {
+        type: 'input',
+        name: 'year',
+        message: 'Which year to import?',
+        default: function() {
+          return 2017;
+        },
+      },
+    ];
+    inquirer.prompt(question).then(selection => {
+      importEvents(
+        cities.filter(city => selection.cities.includes(city.city)),
+        selection.year
+      );
     });
+  });
 
 program.parse(process.argv);

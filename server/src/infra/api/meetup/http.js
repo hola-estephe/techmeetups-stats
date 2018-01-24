@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 
-export default request = async (url, query = {}) => {
+export default async (url, query = {}) => {
   try {
     // @todo merge meetupApiKey to query
     const response = await axios({
