@@ -5,12 +5,14 @@ import {
   findTechGroupsByCity,
   findPastEvents,
 } from '../infra/api/meetup/api';
-import database from '../infra/database/index';
+import { connection, database } from '../infra/database/index';
 import moment from 'moment';
 import uuid from 'uuid/v4';
 
 export default async (cities, year) => {
-  const client = await database.connect();
+  const client = await connection();
+  const db = await database();
+  const eventsCollection = db.collection('events');
 
   try {
     for (const city of cities) {
@@ -49,11 +51,11 @@ export default async (cities, year) => {
 
         console.log(` - Found ${events.length} events`);
 
-        const result = await client.query({
-          text: 'SELECT id FROM events WHERE id = ANY ($1)',
-          values: [events.map(event => event.id)],
-        });
-        const savedIds = result.rows.map(row => row.id);
+        const savedDocuments = await eventsCollection.find(
+          { id: { $in: events.map(event => event.id) } },
+          { projection: {id: 1}}
+        ).toArray();
+        const savedIds = savedDocuments.map(event => event.id);
 
         const newEvents = events.filter(event => !savedIds.includes(event.id));
         if (0 === newEvents.length) {
@@ -62,18 +64,9 @@ export default async (cities, year) => {
           continue;
         }
 
-        await client.query('BEGIN');
-        newEvents.forEach(async event => {
-          await client.query(
-            'INSERT INTO events(id, name, link, time, attendees, city, event_group, venue) VALUES($1, $2, $3, $4, $5, $6, $7, $8)',
-            Object.values(event)
-          );
-        });
-        await client.query('COMMIT');
-
-        console.log(` - Imported ${newEvents.length} events`);
+        db.collection('events').insertMany(events);
+        console.log(` - Imported ${events.length} events`);
       } catch (err) {
-        await client.query('ROLLBACK');
         console.error(err.stack);
         throw err;
       }
@@ -82,6 +75,6 @@ export default async (cities, year) => {
     console.error(err.stack);
     throw err;
   } finally {
-    client.release();
+    client.close();
   }
 };

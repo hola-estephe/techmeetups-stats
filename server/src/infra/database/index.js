@@ -1,12 +1,26 @@
 'use strict';
 
-import { Pool } from 'pg';
+import { MongoClient } from 'mongodb';
 
-const databaseUrl = process.env.DATABASE_URL;
-if (databaseUrl === undefined) {
-  throw new Error('Must provide DATABASE_URL env variable');
+const mongodbUri = process.env.MONGODB_URI;
+if (mongodbUri === undefined) {
+  throw new Error('Must provide MONGODB_URI env variable');
 }
 
-export default new Pool({
-  connectionString: databaseUrl,
-});
+let client;
+
+const connection = async () => {
+  if (!client) {
+    client = await MongoClient.connect(mongodbUri);
+  }
+
+  return client;
+};
+
+const database = async () => {
+  const client = await connection();
+
+  return client.db(client.s.options.dbName);
+};
+
+export { connection, database };

@@ -4,38 +4,22 @@ services:
     node:
         build: .
         depends_on:
-            - postgres
+            - mongo
         ports:
             - "3000:3000"
             - "3001:3001"
         volumes:
             - ./:/usr/src/app:rw
         working_dir: /usr/src/app
-#        environment:
-#            - DATABASE_URL=postgres://postgres:postgres@postgres:5432/techmeetups_stats
         env_file:
             - .env
 
-    postgres:
-        image: postgres:latest
+    mongo:
+        image: mongo:latest
         ports:
-            - "5432:5432"
+            - "27017:27017"
         volumes:
-            - postgres-data:/var/lib/postgresql/data:rw
-        environment:
-            - POSTGRES_USER=postgres
-            - POSTGRES_PASSWORD=postgres
-            - POSTGRES_DB=techmeetups_stats
-
-    pgadmin4:
-        image: fenglc/pgadmin4:latest
-        depends_on:
-            - postgres
-        ports:
-            - "5050:5050"
-        environment:
-            - DEFAULT_USER=admin
-            - DEFAULT_PASSWORD=password
+            - mongo-data:/data/db:rw
 
 volumes:
-    postgres-data: {}
+    mongo-data: {}

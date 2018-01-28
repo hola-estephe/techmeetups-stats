@@ -13,13 +13,11 @@
   "dependencies": {
     "axios": "^0.17.1",
     "commander": "^2.13.0",
-    "db-migrate": "^0.10.2",
-    "db-migrate-pg": "^0.2.5",
     "express": "^4.16.2",
     "http-status": "^1.0.1",
     "inquirer": "^5.0.1",
     "moment": "^2.20.1",
-    "pg": "^7.4.1",
+    "mongodb": "^3.0.1",
     "reify": "^0.13.7",
     "tcomb": "^3.2.24",
     "uuid": "^3.2.1"
